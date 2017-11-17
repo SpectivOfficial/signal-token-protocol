@@ -10,7 +10,7 @@ contract SignalTokenMock {
 
   modifier atLeast(uint amount) {
     if (balances[msg.sender] < amount) {
-      revert();
+      return;
     }
 
     _;
