@@ -20,8 +20,10 @@ contract SignalTokenMock {
     return balances[addr];
   }
 
-  function transfer(uint amount, address destination) public atLeast(amount) {
+  function transfer(uint amount, address destination) public atLeast(amount) returns (bool) {
     balances[msg.sender] -= amount;
     balances[destination] += amount;
+
+    return true;
   }
 }
