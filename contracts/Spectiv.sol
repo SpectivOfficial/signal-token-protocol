@@ -2,53 +2,54 @@ pragma solidity ^0.4.4;
 
 
 contract Spectiv {
-  address owner;
+  event test_value(bool value);
+  address public owner;
 
-  mapping(address => bool) admins;
-  mapping(address => bool) advertisers;
+  mapping(address => bool) private admins;
+  mapping(address => bool) private advertisers;
 
-  function Spectiv() {
+  function Spectiv() public {
     owner = msg.sender;
     admins[msg.sender] = true;
   }
 
   modifier isOwner() {
-    if (msg.sender != owner) {
-      return;
+    if (msg.sender == owner) {
+      _;
     }
-
-    _;
   }
 
   modifier isAdmin() {
-    if (!admins[msg.sender]) {
+    if (admins[msg.sender]) {
+      _;
+    }
+  }
+
+  function getAdmin(address addr) public view isAdmin returns (bool) {
+    return admins[addr];
+  }
+
+  function addAdmin(address addr) public isOwner {
+    admins[addr] = true;
+  }
+
+  function removeAdmin(address addr) public isOwner {
+    if (owner == addr) {
       return;
     }
 
-    _;
-  }
-
-  function addAdmin(address addr) public isOwner returns (bool) {
-    admins[addr] = true;
-    return true;
-  }
-
-  function removeAdmin(address addr) public isOwner returns (bool) {
-    if (owner == addr) {
-      return false;
-    }
-
     admins[addr] = false;
-    return true;
   }
 
-  function addAdvertiser(address addr) public isAdmin returns (bool) {
+  function getAdvertiser(address addr) public view isAdmin returns (bool) {
+    return advertisers[addr];
+  }
+
+  function addAdvertiser(address addr) public isAdmin {
     advertisers[addr] = true;
-    return true;
   }
 
-  function removeAdvertiser(address addr) public isAdmin returns (bool) {
+  function removeAdvertiser(address addr) public isAdmin {
     advertisers[addr] = false;
-    return true;
   }
 }
