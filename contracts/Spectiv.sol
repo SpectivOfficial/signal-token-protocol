@@ -1,5 +1,6 @@
 pragma solidity ^0.4.4;
 
+import './Advertiser.sol';
 import './SignalTokenMock.sol';
 
 
@@ -7,7 +8,7 @@ contract Spectiv {
   address public owner;
 
   mapping(address => bool) private admins;
-  mapping(address => bool) private advertisers;
+  mapping(address => Advertiser) private advertisers;
 
   SignalTokenMock private signal_token_mock;
 
@@ -48,5 +49,15 @@ contract Spectiv {
 
   function getAdmin(address addr) public view isAdmin returns (bool) {
     return admins[addr];
+  }
+
+  function addAdvertiser(address addr) public isAdmin returns (address) {
+    advertisers[addr] = new Advertiser(addr);
+    return advertisers[addr];
+  }
+
+  function removeAdvertiser(address addr) public isAdmin returns (bool) {
+    delete advertisers[addr];
+    return true;
   }
 }
