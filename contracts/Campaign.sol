@@ -1,5 +1,7 @@
 pragma solidity ^0.4.4;
 
+import './Spectiv.sol';
+
 
 contract Campaign {
   address advertiser;
@@ -17,6 +19,6 @@ contract Campaign {
   }
 
   function initializeTransfer() private {
-    // Calls 'SignalTokenMock.transfer'
+    // Calls 'Spectiv.transfer'
   }
 }

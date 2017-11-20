@@ -1,5 +1,7 @@
 pragma solidity ^0.4.4;
 
+import './SignalTokenMock.sol';
+
 
 contract Spectiv {
   address public owner;
@@ -22,6 +24,10 @@ contract Spectiv {
     if (admins[msg.sender]) {
       _;
     }
+  }
+
+  function transfer(uint amount, address advertiser, address publisher) {
+    // Calls 'SignalTokenMock.transfer'
   }
 
   function getAdmin(address addr) public view isAdmin returns (bool) {
