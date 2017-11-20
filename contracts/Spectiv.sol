@@ -2,7 +2,6 @@ pragma solidity ^0.4.4;
 
 
 contract Spectiv {
-  event test_value(bool value);
   address public owner;
 
   mapping(address => bool) private admins;
@@ -41,15 +40,15 @@ contract Spectiv {
     admins[addr] = false;
   }
 
-  function getAdvertiser(address addr) public view isAdmin returns (bool) {
-    return advertisers[addr];
-  }
+  // function getAdvertiser(address addr) public view isAdmin returns (bool) {
+  //   return advertisers[addr];
+  // }
 
-  function addAdvertiser(address addr) public isAdmin {
-    advertisers[addr] = true;
-  }
+  // function addAdvertiser(address addr) public isAdmin {
+  //   advertisers[addr] = true;
+  // }
 
-  function removeAdvertiser(address addr) public isAdmin {
-    advertisers[addr] = false;
-  }
+  // function removeAdvertiser(address addr) public isAdmin {
+  //   advertisers[addr] = false;
+  // }
 }
