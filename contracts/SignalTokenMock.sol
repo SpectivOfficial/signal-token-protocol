@@ -8,19 +8,25 @@ contract SignalTokenMock {
     balances[msg.sender] = 1000000;
   }
 
-  modifier atLeast(uint amount) {
-    if (balances[msg.sender] < amount) {
-      return;
+  modifier atLeast(address sender, uint amount) {
+    if (balances[sender] >= amount) {
+      _;
     }
-
-    _;
   }
 
-  function getBalance(address addr) public view returns (uint) {
+  function getBalance(address addr)
+    public
+    view
+    returns (uint)
+  {
     return balances[addr];
   }
 
-  function transfer(uint amount, address sender, address destination) public returns (bool) {
+  function transfer(uint amount, address sender, address destination)
+    public
+    atLeast(sender, amount)
+    returns (bool)
+  {
     balances[sender] -= amount;
     balances[destination] += amount;
 

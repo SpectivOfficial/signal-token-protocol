@@ -1,4 +1,5 @@
-var Spectiv = artifacts.require("Spectiv");
+const Spectiv = artifacts.require("Spectiv");
+
 
 contract("Spectiv", function(accounts) {
   let spectiv;
@@ -9,6 +10,7 @@ contract("Spectiv", function(accounts) {
         spectiv = instance;
       });
   });
+
 
   it("should set the owner address to contract deployer", function() {
     const contractOwner = accounts[0];
@@ -89,7 +91,7 @@ contract("Spectiv", function(accounts) {
     const newAdmin = accounts[1];
     const nonOwner = accounts[2];
 
-    spectiv.addAdmin(newAdmin, { from :nonOwner })
+    return spectiv.addAdmin(newAdmin, { from :nonOwner })
       .then(function() {
         return spectiv.getAdmin(newAdmin, { from: owner });
       })
@@ -104,7 +106,7 @@ contract("Spectiv", function(accounts) {
     const nonAdmin = accounts[1];
     const admin    = accounts[2];
 
-    spectiv.addAdmin(admin, { from: owner })
+    return spectiv.addAdmin(admin, { from: owner })
       .then(function() {
         return spectiv.removeAdmin(admin, { from: nonAdmin });
       })
@@ -120,7 +122,7 @@ contract("Spectiv", function(accounts) {
   it("shouldn't allow owner to remove self as admin", function() {
     const owner = accounts[0];
 
-    spectiv.removeAdmin(owner)
+    return spectiv.removeAdmin(owner)
       .then(function() {
         return spectiv.getAdmin(owner);
       })
