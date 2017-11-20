@@ -1,15 +1,24 @@
-var SignalTokenMock = artifacts.require("SignalTokenMock");
+const SignalTokenMock = artifacts.require("SignalTokenMock");
 
 
 contract("SignalTokenMock", function(accounts) {
-  it("should give the deploying account 1000000 tokens", function() {
-    return SignalTokenMock.deployed()
+  const owner = accounts[0];
+  let signalTokenMock;
+
+  beforeEach(function() {
+    return SignalTokenMock.new(owner)
       .then(function(instance) {
-        return instance.getBalance(accounts[0]);
-      })
+        signalTokenMock = instance;
+      });
+  });
+
+
+  it("should give the deploying account 1000000 tokens", function() {
+    return signalTokenMock.getBalance(owner)
       .then(function(balance) {
         assert.equal(
-          balance.valueOf(), 1000000,
+          balance.valueOf(),
+          1000000,
           "1000000 wasn't the deploying account balance"
         );
       });
@@ -17,51 +26,49 @@ contract("SignalTokenMock", function(accounts) {
 
 
   it("should complete a transfer if sender's balance allows", function() {
-    var signal_token_mock;
+    const accountOne = owner;
+    let accountOneStartingBalance;
+    let accountOneEndingBalance;
 
-    var account_one = accounts[0];
-    var account_one_starting_balance;
-    var account_one_ending_balance;
+    const accountTwo = accounts[1];
+    let accountTwoStartingBalance;
+    let accountTwoEndingBalance;
 
-    var account_two = accounts[1];
-    var account_two_starting_balance;
-    var account_two_ending_balance;
+    const amount = 1000000;
 
-    var amount = 1000000;
-
-    return SignalTokenMock.deployed()
-      .then(function(instance) {
-        signal_token_mock = instance;
-        return signal_token_mock.getBalance(account_one);
+    return signalTokenMock.getBalance(accountOne)
+      .then(function(balance) {
+        accountOneStartingBalance = balance.toNumber();
+        return signalTokenMock.getBalance(accountTwo);
       })
       .then(function(balance) {
-        account_one_starting_balance = balance.toNumber();
-        return signal_token_mock.getBalance(account_two);
-      })
-      .then(function(balance) {
-        account_two_starting_balance = balance.toNumber();
-        return signal_token_mock.transfer(
-          amount, account_two, { from: account_one }
+        accountTwoStartingBalance = balance.toNumber();
+        return signalTokenMock.executeTransfer(
+          accountOne,
+          accountTwo,
+          amount,
+          { from: owner }
         );
       })
       .then(function() {
-        return signal_token_mock.getBalance(account_one);
+        return signalTokenMock.getBalance(accountOne);
       })
       .then(function(balance) {
-        account_one_ending_balance = balance.toNumber();
-        return signal_token_mock.getBalance(account_two);
+        accountOneEndingBalance = balance.toNumber();
+        return signalTokenMock.getBalance(accountTwo);
       })
       .then(function(balance) {
-        account_two_ending_balance = balance.toNumber();
+        accountTwoEndingBalance = balance.toNumber();
 
         assert.equal(
-          account_one_ending_balance,
-          account_one_starting_balance - amount,
-          "0 wasn't the deploying account final balance"
+          accountOneEndingBalance,
+          accountOneStartingBalance - amount,
+          "0 wasn't the sender account final balance"
         );
+
         assert.equal(
-          account_two_ending_balance,
-          account_two_starting_balance + amount,
+          accountTwoEndingBalance,
+          accountTwoStartingBalance + amount,
           "1000000 wasn't the destination account final balance"
         );
       });
@@ -69,51 +76,48 @@ contract("SignalTokenMock", function(accounts) {
 
 
   it("should revert a transfer if sender's balance disallows", function() {
-    var signal_token_mock;
+    const accountOne = owner;
+    let accountOneStartingBalance;
+    let accountOneEndingBalance;
 
-    var account_one = accounts[0];
-    var account_one_starting_balance;
-    var account_one_ending_balance;
+    const accountTwo = accounts[1];
+    let accountTwoStartingBalance;
+    let accountTwoEndingBalance;
 
-    var account_two = accounts[1];
-    var account_two_starting_balance;
-    var account_two_ending_balance;
+    const amount = 1000001;
 
-    var amount = 1000000;
-
-    return SignalTokenMock.deployed()
-      .then(function(instance) {
-        signal_token_mock = instance;
-        return signal_token_mock.getBalance(account_one);
+    return signalTokenMock.getBalance(accountOne)
+      .then(function(balance) {
+        accountOneStartingBalance = balance.toNumber();
+        return signalTokenMock.getBalance(accountTwo);
       })
       .then(function(balance) {
-        account_one_starting_balance = balance.toNumber();
-        return signal_token_mock.getBalance(account_two);
-      })
-      .then(function(balance) {
-        account_two_starting_balance = balance.toNumber();
-        return signal_token_mock.transfer(
-          amount, account_two, { from: account_one }
+        accountTwoStartingBalance = balance.toNumber();
+        return signalTokenMock.executeTransfer(
+          accountOne,
+          accountTwo,
+          amount,
+          { from: owner }
         );
       })
       .then(function() {
-        return signal_token_mock.getBalance(account_one);
+        return signalTokenMock.getBalance(accountOne);
       })
       .then(function(balance) {
-        account_one_ending_balance = balance.toNumber();
-        return signal_token_mock.getBalance(account_two);
+        accountOneEndingBalance = balance.toNumber();
+        return signalTokenMock.getBalance(accountTwo);
       })
       .then(function(balance) {
-        account_two_ending_balance = balance.toNumber();
+        accountTwoEndingBalance = balance.toNumber();
 
         assert.equal(
-          account_one_ending_balance,
-          account_one_starting_balance,
+          accountOneEndingBalance,
+          accountOneStartingBalance,
           "1000000 wasn't the deploying account final balance"
         );
         assert.equal(
-          account_two_ending_balance,
-          account_two_starting_balance,
+          accountTwoEndingBalance,
+          accountTwoStartingBalance,
           "0 wasn't the destination account final balance"
         );
       });
