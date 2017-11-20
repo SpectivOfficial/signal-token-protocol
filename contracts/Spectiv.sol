@@ -33,7 +33,7 @@ contract Spectiv {
   }
 
   function removeAdmin(address addr) public isOwner {
-    if (owner == addr) {
+    if (addr == owner) {
       return;
     }
 
