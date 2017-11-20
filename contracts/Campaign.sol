@@ -8,17 +8,17 @@ contract Campaign {
   address publisher;
   uint amount;
 
-  function Campaign(address _publisher, uint _amount) {
+  function Campaign(address _publisher, uint _amount) public {
     advertiser = msg.sender;
     publisher = _publisher;
     amount = _amount;
   }
 
-  function execute() public {
-    initializeTransfer();
+  function execute() public pure returns (bool) {
+    return initializeTransfer();
   }
 
-  function initializeTransfer() private {
-    // Calls 'Spectiv.transfer'
+  function initializeTransfer() private pure returns (bool) {
+    return true;
   }
 }
