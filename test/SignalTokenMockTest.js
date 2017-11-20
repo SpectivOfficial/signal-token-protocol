@@ -2,10 +2,11 @@ const SignalTokenMock = artifacts.require("SignalTokenMock");
 
 
 contract("SignalTokenMock", function(accounts) {
+  const owner = accounts[0];
   let signalTokenMock;
 
   beforeEach(function() {
-    return SignalTokenMock.new()
+    return SignalTokenMock.new(owner)
       .then(function(instance) {
         signalTokenMock = instance;
       });
@@ -13,7 +14,7 @@ contract("SignalTokenMock", function(accounts) {
 
 
   it("should give the deploying account 1000000 tokens", function() {
-    return signalTokenMock.getBalance(accounts[0])
+    return signalTokenMock.getBalance(owner)
       .then(function(balance) {
         assert.equal(
           balance.valueOf(),
@@ -25,7 +26,7 @@ contract("SignalTokenMock", function(accounts) {
 
 
   it("should complete a transfer if sender's balance allows", function() {
-    const accountOne = accounts[0];
+    const accountOne = owner;
     let accountOneStartingBalance;
     let accountOneEndingBalance;
 
@@ -42,10 +43,11 @@ contract("SignalTokenMock", function(accounts) {
       })
       .then(function(balance) {
         accountTwoStartingBalance = balance.toNumber();
-        return signalTokenMock.transfer(
-          amount,
+        return signalTokenMock.executeTransfer(
           accountOne,
-          accountTwo
+          accountTwo,
+          amount,
+          { from: owner }
         );
       })
       .then(function() {
@@ -61,7 +63,7 @@ contract("SignalTokenMock", function(accounts) {
         assert.equal(
           accountOneEndingBalance,
           accountOneStartingBalance - amount,
-          "0 wasn't the deploying account final balance"
+          "0 wasn't the sender account final balance"
         );
 
         assert.equal(
@@ -74,7 +76,7 @@ contract("SignalTokenMock", function(accounts) {
 
 
   it("should revert a transfer if sender's balance disallows", function() {
-    const accountOne = accounts[0];
+    const accountOne = owner;
     let accountOneStartingBalance;
     let accountOneEndingBalance;
 
@@ -91,11 +93,11 @@ contract("SignalTokenMock", function(accounts) {
       })
       .then(function(balance) {
         accountTwoStartingBalance = balance.toNumber();
-        return signalTokenMock.transfer(
-          amount,
+        return signalTokenMock.executeTransfer(
           accountOne,
           accountTwo,
-          { from: accountOne }
+          amount,
+          { from: owner }
         );
       })
       .then(function() {
