@@ -9,12 +9,6 @@ development and testing purposes.
 
 ### Prerequisites
 
-* [node](https://nodejs.org/en/download)
-
-* [npm](https://npmjs.org)
-
-* [yarn](https://yarnpkg.com/en/docs/install)
-
 * [truffle](https://truffleframework.com)
 
 ### Installing
@@ -22,11 +16,7 @@ development and testing purposes.
 After cloning this repository and installing the above dependencies, perform
 
 ```
-$ yarn install
-```
-
-```
-truffle develop
+$ truffle develop
 ```
 
 ```
