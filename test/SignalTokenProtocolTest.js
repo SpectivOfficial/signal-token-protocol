@@ -1,13 +1,14 @@
-const Spectiv = artifacts.require("Spectiv");
+const SignalTokenProtocol = artifacts.require("SignalTokenProtocol");
 
 
-contract("Spectiv", function(accounts) {
-  let spectiv;
+contract("SignalTokenProtocol", function(accounts) {
+  let signalTokenProtocol;
+
 
   beforeEach(function() {
-    return Spectiv.new()
+    return SignalTokenProtocol.new()
       .then(function(instance) {
-        spectiv = instance;
+        signalTokenProtocol = instance;
       });
   });
 
@@ -15,7 +16,7 @@ contract("Spectiv", function(accounts) {
   it("should set owner to the contract deployer", function() {
     const contractOwner = accounts[0];
 
-    return spectiv.owner.call()
+    return signalTokenProtocol.owner.call()
       .then(function(owner) {
         assert.equal(owner, contractOwner, "deployer is not owner");
       });
@@ -23,9 +24,9 @@ contract("Spectiv", function(accounts) {
 
 
   it("should make owner an admin", function() {
-    return spectiv.owner.call()
+    return signalTokenProtocol.owner.call()
       .then(function(owner) {
-        return spectiv.getAdmin(owner, { from: owner });
+        return signalTokenProtocol.getAdmin(owner, { from: owner });
       })
       .then(function(isAdmin) {
         assert.equal(isAdmin, true, "owner isn't an admin")
@@ -36,9 +37,9 @@ contract("Spectiv", function(accounts) {
   it("shouldn't allow owner to remove self as admin", function() {
     const owner = accounts[0];
 
-    return spectiv.removeAdmin(owner)
+    return signalTokenProtocol.removeAdmin(owner)
       .then(function() {
-        return spectiv.getAdmin(owner);
+        return signalTokenProtocol.getAdmin(owner);
       })
       .then(function(isAdmin) {
         assert.equal(isAdmin, true, "owner is not an admin");
@@ -50,9 +51,9 @@ contract("Spectiv", function(accounts) {
     const owner = accounts[0];
     const admin = accounts[1];
 
-    return spectiv.addAdmin(admin, { from: owner })
+    return signalTokenProtocol.addAdmin(admin, { from: owner })
       .then(function() {
-        return spectiv.getAdmin(admin, { from: owner });
+        return signalTokenProtocol.getAdmin(admin, { from: owner });
       })
       .then(function(isAdmin) {
         assert.equal(isAdmin, true, "owner didn't add admin");
@@ -65,9 +66,9 @@ contract("Spectiv", function(accounts) {
     const newAdmin = accounts[1];
     const nonOwner = accounts[2];
 
-    return spectiv.addAdmin(newAdmin, { from :nonOwner })
+    return signalTokenProtocol.addAdmin(newAdmin, { from :nonOwner })
       .then(function() {
-        return spectiv.getAdmin(newAdmin, { from: owner });
+        return signalTokenProtocol.getAdmin(newAdmin, { from: owner });
       })
       .then(function(isAdmin) {
         assert.equal(isAdmin, false, "non-owner added admin");
@@ -79,12 +80,12 @@ contract("Spectiv", function(accounts) {
     const owner = accounts[0];
     const admin = accounts[1];
 
-    return spectiv.addAdmin(admin, { from: owner })
+    return signalTokenProtocol.addAdmin(admin, { from: owner })
       .then(function() {
-        return spectiv.removeAdmin(admin, { from: owner });
+        return signalTokenProtocol.removeAdmin(admin, { from: owner });
       })
       .then(function() {
-        return spectiv.getAdmin(admin);
+        return signalTokenProtocol.getAdmin(admin);
       })
       .then(function(isAdmin) {
         assert.equal(isAdmin, false, "owner didn't remove admin");
@@ -97,12 +98,12 @@ contract("Spectiv", function(accounts) {
     const nonAdmin = accounts[1];
     const admin    = accounts[2];
 
-    return spectiv.addAdmin(admin, { from: owner })
+    return signalTokenProtocol.addAdmin(admin, { from: owner })
       .then(function() {
-        return spectiv.removeAdmin(admin, { from: nonAdmin });
+        return signalTokenProtocol.removeAdmin(admin, { from: nonAdmin });
       })
       .then(function() {
-        return spectiv.getAdmin(admin);
+        return signalTokenProtocol.getAdmin(admin);
       })
       .then(function(isAdmin) {
         assert.equal(isAdmin, true, "non-owner removed admin");
@@ -115,12 +116,12 @@ contract("Spectiv", function(accounts) {
     const admin1 = accounts[1];
     const admin2 = accounts[2];
 
-    return spectiv.addAdmin(admin1, { from: owner })
+    return signalTokenProtocol.addAdmin(admin1, { from: owner })
       .then(function() {
-        return spectiv.addAdmin(admin2, { from: owner });
+        return signalTokenProtocol.addAdmin(admin2, { from: owner });
       })
       .then(function() {
-        return spectiv.getAdmin(admin1, { from: admin2 });
+        return signalTokenProtocol.getAdmin(admin1, { from: admin2 });
       })
       .then(function(isAdmin) {
         assert.equal(isAdmin, true, "admin didn't get admin");
@@ -133,9 +134,9 @@ contract("Spectiv", function(accounts) {
     const admin    = accounts[1];
     const nonAdmin = accounts[2];
 
-    return spectiv.addAdmin(admin, { from: owner })
+    return signalTokenProtocol.addAdmin(admin, { from: owner })
       .then(function() {
-        return spectiv.getAdmin(admin, { from: nonAdmin });
+        return signalTokenProtocol.getAdmin(admin, { from: nonAdmin });
       })
       .then(function(isAdmin) {
         assert.equal(isAdmin, false, "non-admin got admin");

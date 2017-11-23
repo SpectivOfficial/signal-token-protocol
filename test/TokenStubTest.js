@@ -1,20 +1,21 @@
-const SignalTokenMock = artifacts.require("SignalTokenMock");
+const TokenStub = artifacts.require("TokenStub");
 
 
-contract("SignalTokenMock", function(accounts) {
+contract("TokenStub", function(accounts) {
   const owner = accounts[0];
-  let signalTokenMock;
+  let tokenStub;
+
 
   beforeEach(function() {
-    return SignalTokenMock.new(owner)
+    return TokenStub.new(owner)
       .then(function(instance) {
-        signalTokenMock = instance;
+        tokenStub = instance;
       });
   });
 
 
   it("should give the deploying account 1000000 tokens", function() {
-    return signalTokenMock.getBalance(owner)
+    return tokenStub.getBalance(owner)
       .then(function(balance) {
         assert.equal(
           balance.valueOf(),
@@ -36,14 +37,14 @@ contract("SignalTokenMock", function(accounts) {
 
     const amount = 1000000;
 
-    return signalTokenMock.getBalance(accountOne)
+    return tokenStub.getBalance(accountOne)
       .then(function(balance) {
         accountOneStartingBalance = balance.toNumber();
-        return signalTokenMock.getBalance(accountTwo);
+        return tokenStub.getBalance(accountTwo);
       })
       .then(function(balance) {
         accountTwoStartingBalance = balance.toNumber();
-        return signalTokenMock.executeTransfer(
+        return tokenStub.executeTransfer(
           accountOne,
           accountTwo,
           amount,
@@ -51,11 +52,11 @@ contract("SignalTokenMock", function(accounts) {
         );
       })
       .then(function() {
-        return signalTokenMock.getBalance(accountOne);
+        return tokenStub.getBalance(accountOne);
       })
       .then(function(balance) {
         accountOneEndingBalance = balance.toNumber();
-        return signalTokenMock.getBalance(accountTwo);
+        return tokenStub.getBalance(accountTwo);
       })
       .then(function(balance) {
         accountTwoEndingBalance = balance.toNumber();
@@ -86,14 +87,14 @@ contract("SignalTokenMock", function(accounts) {
 
     const amount = 1000001;
 
-    return signalTokenMock.getBalance(accountOne)
+    return tokenStub.getBalance(accountOne)
       .then(function(balance) {
         accountOneStartingBalance = balance.toNumber();
-        return signalTokenMock.getBalance(accountTwo);
+        return tokenStub.getBalance(accountTwo);
       })
       .then(function(balance) {
         accountTwoStartingBalance = balance.toNumber();
-        return signalTokenMock.executeTransfer(
+        return tokenStub.executeTransfer(
           accountOne,
           accountTwo,
           amount,
@@ -101,11 +102,11 @@ contract("SignalTokenMock", function(accounts) {
         );
       })
       .then(function() {
-        return signalTokenMock.getBalance(accountOne);
+        return tokenStub.getBalance(accountOne);
       })
       .then(function(balance) {
         accountOneEndingBalance = balance.toNumber();
-        return signalTokenMock.getBalance(accountTwo);
+        return tokenStub.getBalance(accountTwo);
       })
       .then(function(balance) {
         accountTwoEndingBalance = balance.toNumber();

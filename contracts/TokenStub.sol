@@ -1,15 +1,10 @@
 pragma solidity ^0.4.4;
 
 
-contract SignalTokenMock {
+contract TokenStub {
   address public owner;
 
   mapping (address => uint) public balances;
-
-  function SignalTokenMock(address _owner) public {
-    owner = _owner;
-    balances[owner] = 1000000;
-  }
 
   modifier isOwner() {
     if (msg.sender == owner) {
@@ -23,8 +18,13 @@ contract SignalTokenMock {
     }
   }
 
-  function getBalance(address addr) public view returns (uint) {
-    return balances[addr];
+  function TokenStub(address _owner) public {
+    owner = _owner;
+    balances[owner] = 1000000;
+  }
+
+  function getBalance(address _address) public view returns (uint) {
+    return balances[_address];
   }
 
   function executeTransfer(address advertiser, address publisher, uint amount)
