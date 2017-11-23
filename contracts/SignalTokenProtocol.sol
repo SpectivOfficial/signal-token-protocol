@@ -11,7 +11,6 @@ contract SignalTokenProtocol {
   }
 
   address public owner;
-
   mapping(address => bool) private admins;
   mapping(uint => Campaign) private campaigns;
 
@@ -40,6 +39,11 @@ contract SignalTokenProtocol {
 
   function transfer(address advertiser, address publisher, uint amount) public returns (bool) {
     return token_stub.executeTransfer(advertiser, publisher, amount);
+  }
+
+  function executeCampaign(uint campaignId) public isOwner returns (bool) {
+    Campaign storage campaign = campaigns[campaignId];
+    return transfer(campaign.advertiser, campaign.publisher, campaign.amount);
   }
 
 
