@@ -1,17 +1,22 @@
-pragma solidity ^0.4.4;
+pragma solidity ^0.4.18;
 
-// import './Advertiser.sol';
 import './TokenStub.sol';
 
 
 contract SignalTokenProtocol {
+  struct Campaign {
+    address advertiser;
+    address publisher;
+    uint amount;
+  }
+
   address public owner;
+
+  mapping(address => bool) private admins;
+  mapping(uint => Campaign) private campaigns;
 
   TokenStub public token_stub;
 
-  mapping(address => bool) private admins;
-
-  // mapping(address => Advertiser) private advertisers;
 
   modifier isOwner() {
     if (msg.sender == owner) {
@@ -25,15 +30,18 @@ contract SignalTokenProtocol {
     }
   }
 
+
   function SignalTokenProtocol() public {
     owner = msg.sender;
     admins[owner] = true;
     token_stub = new TokenStub(this);
   }
 
+
   function transfer(address advertiser, address publisher, uint amount) public returns (bool) {
     return token_stub.executeTransfer(advertiser, publisher, amount);
   }
+
 
   function addAdmin(address _address) public isOwner {
     admins[_address] = true;
@@ -49,14 +57,4 @@ contract SignalTokenProtocol {
   function getAdmin(address _address) public view isAdmin returns (bool) {
     return admins[_address];
   }
-
-  // function addAdvertiser(address addr) public isAdmin returns (address) {
-  //   advertisers[addr] = new Advertiser(addr);
-  //   return advertisers[addr];
-  // }
-
-  // function removeAdvertiser(address addr) public isAdmin returns (bool) {
-  //   delete advertisers[addr];
-  //   return true;
-  // }
 }
