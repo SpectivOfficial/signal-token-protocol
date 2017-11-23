@@ -12,31 +12,37 @@ contract("Spectiv", function(accounts) {
   });
 
 
-  it("should set the owner address to contract deployer", function() {
+  it("should set owner to the contract deployer", function() {
     const contractOwner = accounts[0];
 
-    return spectiv.owner()
+    return spectiv.owner.call()
       .then(function(owner) {
-        assert.equal(owner, contractOwner, "Deployer is not owner");
+        assert.equal(owner, contractOwner, "deployer is not owner");
       });
   });
 
 
-  it("should allow admins to get other admins", function() {
-    const owner  = accounts[0];
-    const admin1 = accounts[1];
-    const admin2 = accounts[2];
-
-    return spectiv.addAdmin(admin1, { from: owner })
-      .then(function() {
-        return spectiv.addAdmin(admin2, { from: owner });
-      })
-      .then(function() {
-        return spectiv.getAdmin(admin1, { from: admin2 });
+  it("should make owner an admin", function() {
+    return spectiv.owner.call()
+      .then(function(owner) {
+        return spectiv.getAdmin(owner, { from: owner });
       })
       .then(function(isAdmin) {
-        assert.equal(isAdmin, true, "admin didn't get admin");
+        assert.equal(isAdmin, true, "owner isn't an admin")
+      });
+  });
+
+
+  it("shouldn't allow owner to remove self as admin", function() {
+    const owner = accounts[0];
+
+    return spectiv.removeAdmin(owner)
+      .then(function() {
+        return spectiv.getAdmin(owner);
       })
+      .then(function(isAdmin) {
+        assert.equal(isAdmin, true, "owner is not an admin");
+      });
   });
 
 
@@ -54,6 +60,21 @@ contract("Spectiv", function(accounts) {
   });
 
 
+  it("shouldn't allow non-owner to add an admin", function() {
+    const owner    = accounts[0];
+    const newAdmin = accounts[1];
+    const nonOwner = accounts[2];
+
+    return spectiv.addAdmin(newAdmin, { from :nonOwner })
+      .then(function() {
+        return spectiv.getAdmin(newAdmin, { from: owner });
+      })
+      .then(function(isAdmin) {
+        assert.equal(isAdmin, false, "non-owner added admin");
+      });
+  });
+
+
   it("should allow owner to remove an admin", function() {
     const owner = accounts[0];
     const admin = accounts[1];
@@ -67,36 +88,6 @@ contract("Spectiv", function(accounts) {
       })
       .then(function(isAdmin) {
         assert.equal(isAdmin, false, "owner didn't remove admin");
-      });
-  });
-
-
-  it("shouldn't allow non-admins to get admins", function() {
-    const owner    = accounts[0];
-    const admin    = accounts[1];
-    const nonAdmin = accounts[2];
-
-    return spectiv.addAdmin(admin, { from: owner })
-      .then(function() {
-        return spectiv.getAdmin(admin, { from: nonAdmin });
-      })
-      .then(function(isAdmin) {
-        assert.equal(isAdmin, false, "non-admin got admin");
-      })
-  });
-
-
-  it("shouldn't allow non-owner to add an admin", function() {
-    const owner    = accounts[0];
-    const newAdmin = accounts[1];
-    const nonOwner = accounts[2];
-
-    return spectiv.addAdmin(newAdmin, { from :nonOwner })
-      .then(function() {
-        return spectiv.getAdmin(newAdmin, { from: owner });
-      })
-      .then(function(isAdmin) {
-        assert.equal(isAdmin, false, "non-owner added admin");
       });
   });
 
@@ -119,15 +110,35 @@ contract("Spectiv", function(accounts) {
   });
 
 
-  it("shouldn't allow owner to remove self as admin", function() {
-    const owner = accounts[0];
+  it("should allow admins to get other admins", function() {
+    const owner  = accounts[0];
+    const admin1 = accounts[1];
+    const admin2 = accounts[2];
 
-    return spectiv.removeAdmin(owner)
+    return spectiv.addAdmin(admin1, { from: owner })
       .then(function() {
-        return spectiv.getAdmin(owner);
+        return spectiv.addAdmin(admin2, { from: owner });
+      })
+      .then(function() {
+        return spectiv.getAdmin(admin1, { from: admin2 });
       })
       .then(function(isAdmin) {
-        assert.equal(isAdmin, true, "owner is not an admin");
-      });
+        assert.equal(isAdmin, true, "admin didn't get admin");
+      })
+  });
+
+
+  it("shouldn't allow non-admins to get admins", function() {
+    const owner    = accounts[0];
+    const admin    = accounts[1];
+    const nonAdmin = accounts[2];
+
+    return spectiv.addAdmin(admin, { from: owner })
+      .then(function() {
+        return spectiv.getAdmin(admin, { from: nonAdmin });
+      })
+      .then(function(isAdmin) {
+        assert.equal(isAdmin, false, "non-admin got admin");
+      })
   });
 });
