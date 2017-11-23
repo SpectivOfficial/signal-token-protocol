@@ -3,143 +3,86 @@ const SignalTokenProtocol = artifacts.require("SignalTokenProtocol");
 
 contract("SignalTokenProtocol", function(accounts) {
   let signalTokenProtocol;
-
+  let advertiser;
+  let publisher;
+  let executor;
+  let amount;
 
   beforeEach(function() {
     return SignalTokenProtocol.new()
-      .then(function(instance) {
-        signalTokenProtocol = instance;
-      });
+    .then(function(instance) {
+      signalTokenProtocol = instance;
+      advertiser = accounts[0];
+      publisher = accounts[1];
+      executor = accounts[2];
+      amount = 42;
+    });
   });
 
-
-  it("should set owner to the contract deployer", function() {
-    const contractOwner = accounts[0];
-
-    return signalTokenProtocol.owner.call()
-      .then(function(owner) {
-        assert.equal(owner, contractOwner, "deployer is not owner");
-      });
+  it("should pass a dummy test", function() {
+    assert.equal(true, true, "the dummy test failed");
   });
 
+  it("should allow an advertiser to create a campaign", function() {
+    let numberOfCampaignsStarting;
+    let numberOfCampaignsEnding;
 
-  it("should make owner an admin", function() {
-    return signalTokenProtocol.owner.call()
-      .then(function(owner) {
-        return signalTokenProtocol.getAdmin(owner, { from: owner });
-      })
-      .then(function(isAdmin) {
-        assert.equal(isAdmin, true, "owner isn't an admin")
-      });
+    return signalTokenProtocol.numberOfCampaigns.call()
+    .then(function(numberOfCampaigns) {
+      numberOfCampaignsStarting = parseInt(numberOfCampaigns.valueOf());
+      return signalTokenProtocol.createCampaign(
+        advertiser,
+        publisher,
+        executor,
+        amount,
+        { from: advertiser }
+      );
+    })
+    .then(function() {
+      return signalTokenProtocol.numberOfCampaigns.call();
+    })
+    .then(function(numberOfCampaigns) {
+      numberOfCampaignsEnding = parseInt(numberOfCampaigns.valueOf());
+      assert.equal(
+        numberOfCampaignsEnding,
+        numberOfCampaignsStarting + 1,
+        "no campaigns were created"
+      );
+    });
   });
 
+  it("should create a campaign with a specified advertiser, publisher, executor, and value", function() {
+    const campaignId = 0;
 
-  it("shouldn't allow owner to remove self as admin", function() {
-    const owner = accounts[0];
+    let _advertiser;
+    let _publisher;
+    let _executor;
+    let _amount;
 
-    return signalTokenProtocol.removeAdmin(owner)
-      .then(function() {
-        return signalTokenProtocol.getAdmin(owner);
-      })
-      .then(function(isAdmin) {
-        assert.equal(isAdmin, true, "owner is not an admin");
-      });
+    return signalTokenProtocol.createCampaign(
+      advertiser,
+      publisher,
+      executor,
+      amount,
+      { from: advertiser }
+    )
+    .then(function() {
+      return signalTokenProtocol.getCampaign(campaignId);
+    })
+    .then(function(campaign) {
+      _advertiser = campaign[0];
+      _publisher = campaign[1];
+      _executor = campaign[2];
+      _amount = campaign[3];
+
+      assert.equal(_advertiser, advertiser, "campaign does not have correct advertiser");
+      assert.equal(_publisher, publisher, "campaign does not have correct publisher");
+      assert.equal(_executor, executor, "campaign does not have correct implementation");
+      assert.equal(_amount, amount, "campaign does not have correct amount");
+    });
   });
 
-
-  it("should allow owner to add an admin", function() {
-    const owner = accounts[0];
-    const admin = accounts[1];
-
-    return signalTokenProtocol.addAdmin(admin, { from: owner })
-      .then(function() {
-        return signalTokenProtocol.getAdmin(admin, { from: owner });
-      })
-      .then(function(isAdmin) {
-        assert.equal(isAdmin, true, "owner didn't add admin");
-      });
-  });
-
-
-  it("shouldn't allow non-owner to add an admin", function() {
-    const owner    = accounts[0];
-    const newAdmin = accounts[1];
-    const nonOwner = accounts[2];
-
-    return signalTokenProtocol.addAdmin(newAdmin, { from :nonOwner })
-      .then(function() {
-        return signalTokenProtocol.getAdmin(newAdmin, { from: owner });
-      })
-      .then(function(isAdmin) {
-        assert.equal(isAdmin, false, "non-owner added admin");
-      });
-  });
-
-
-  it("should allow owner to remove an admin", function() {
-    const owner = accounts[0];
-    const admin = accounts[1];
-
-    return signalTokenProtocol.addAdmin(admin, { from: owner })
-      .then(function() {
-        return signalTokenProtocol.removeAdmin(admin, { from: owner });
-      })
-      .then(function() {
-        return signalTokenProtocol.getAdmin(admin);
-      })
-      .then(function(isAdmin) {
-        assert.equal(isAdmin, false, "owner didn't remove admin");
-      });
-  });
-
-
-  it("shouldn't allow non-owner to remove an admin", function() {
-    const owner    = accounts[0];
-    const nonAdmin = accounts[1];
-    const admin    = accounts[2];
-
-    return signalTokenProtocol.addAdmin(admin, { from: owner })
-      .then(function() {
-        return signalTokenProtocol.removeAdmin(admin, { from: nonAdmin });
-      })
-      .then(function() {
-        return signalTokenProtocol.getAdmin(admin);
-      })
-      .then(function(isAdmin) {
-        assert.equal(isAdmin, true, "non-owner removed admin");
-      });
-  });
-
-
-  it("should allow admins to get other admins", function() {
-    const owner  = accounts[0];
-    const admin1 = accounts[1];
-    const admin2 = accounts[2];
-
-    return signalTokenProtocol.addAdmin(admin1, { from: owner })
-      .then(function() {
-        return signalTokenProtocol.addAdmin(admin2, { from: owner });
-      })
-      .then(function() {
-        return signalTokenProtocol.getAdmin(admin1, { from: admin2 });
-      })
-      .then(function(isAdmin) {
-        assert.equal(isAdmin, true, "admin didn't get admin");
-      })
-  });
-
-
-  it("shouldn't allow non-admins to get admins", function() {
-    const owner    = accounts[0];
-    const admin    = accounts[1];
-    const nonAdmin = accounts[2];
-
-    return signalTokenProtocol.addAdmin(admin, { from: owner })
-      .then(function() {
-        return signalTokenProtocol.getAdmin(admin, { from: nonAdmin });
-      })
-      .then(function(isAdmin) {
-        assert.equal(isAdmin, false, "non-admin got admin");
-      })
-  });
+  // TODO: write solidity tests for campaign execution process
+  //
+  // TODO: write solidity tests for token transfer execution process
 });

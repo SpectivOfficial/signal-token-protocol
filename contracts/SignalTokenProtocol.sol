@@ -7,58 +7,71 @@ contract SignalTokenProtocol {
   struct Campaign {
     address advertiser;
     address publisher;
+    address executor;
     uint amount;
   }
 
-  address public owner;
-  mapping(address => bool) private admins;
-  mapping(uint => Campaign) private campaigns;
+  mapping(uint => Campaign) public campaigns;
+  uint public numberOfCampaigns;
 
-  TokenStub public token_stub;
+  TokenStub public tokenStub;
 
+  modifier isExecutor(uint campaignId) {
+    Campaign storage campaign = campaigns[campaignId];
 
-  modifier isOwner() {
-    if (msg.sender == owner) {
+    if (msg.sender == campaign.executor) {
       _;
     }
   }
-
-  modifier isAdmin() {
-    if (admins[msg.sender]) {
-      _;
-    }
-  }
-
 
   function SignalTokenProtocol() public {
-    owner = msg.sender;
-    admins[owner] = true;
-    token_stub = new TokenStub(this);
+    numberOfCampaigns = 0;
+    tokenStub = new TokenStub(this);
   }
 
-
-  function transfer(address advertiser, address publisher, uint amount) public returns (bool) {
-    return token_stub.executeTransfer(advertiser, publisher, amount);
+  function createCampaign(
+    address advertiser,
+    address publisher,
+    address executor,
+    uint amount
+  )
+    public
+    returns (uint campaignId)
+  {
+    campaignId = numberOfCampaigns++;
+    campaigns[campaignId] = Campaign(advertiser, publisher, executor, amount);
   }
 
-  function executeCampaign(uint campaignId) public isOwner returns (bool) {
+  function getCampaign(uint campaignId)
+    public
+    view
+    returns (address advertiser, address publisher, address executor, uint amount)
+  {
     Campaign storage campaign = campaigns[campaignId];
-    return transfer(campaign.advertiser, campaign.publisher, campaign.amount);
+
+    advertiser = campaign.advertiser;
+    publisher = campaign.publisher;
+    executor = campaign.executor;
+    amount = campaign.amount;
   }
 
-
-  function addAdmin(address _address) public isOwner {
-    admins[_address] = true;
+  function executeCampaign(uint campaignId)
+    public
+    isExecutor(campaignId)
+    returns (bool)
+  {
+    Campaign storage campaign = campaigns[campaignId];
+    return executeTransaction(campaign.advertiser, campaign.publisher, campaign.amount);
   }
 
-  function removeAdmin(address _address) public isOwner {
-    if (_address == owner) {
-      return;
-    }
-    admins[_address] = false;
-  }
-
-  function getAdmin(address _address) public view isAdmin returns (bool) {
-    return admins[_address];
+  function executeTransaction(
+    address advertiser,
+    address publisher,
+    uint amount
+  )
+    private
+    returns (bool)
+  {
+    return tokenStub.executeTransfer(advertiser, publisher, amount);
   }
 }
