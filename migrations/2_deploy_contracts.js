@@ -1,7 +1,7 @@
-var SignalTokenMock = artifacts.require("./SignalTokenMock.sol");
-var Spectiv = artifacts.require("./Spectiv.sol");
+const SignalTokenProtocol = artifacts.require("./SignalTokenProtocol.sol");
+const TokenStub = artifacts.require("./TokenStub.sol");
 
 module.exports = function(deployer) {
-  deployer.deploy(SignalTokenMock);
-  deployer.deploy(Spectiv);
+  deployer.deploy(SignalTokenProtocol);
+  deployer.deploy(TokenStub);
 };
