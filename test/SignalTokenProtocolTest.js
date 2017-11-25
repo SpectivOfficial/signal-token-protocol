@@ -81,8 +81,4 @@ contract("SignalTokenProtocol", function(accounts) {
       assert.equal(_amount, amount, "campaign does not have correct amount");
     });
   });
-
-  // TODO: write solidity tests for campaign execution process
-  //
-  // TODO: write solidity tests for token transfer execution process
 });
