@@ -63,10 +63,10 @@ contract SignalTokenProtocol {
     returns (bool)
   {
     Campaign storage campaign = campaigns[campaignId];
-    return executeTransaction(campaign.advertiser, campaign.publisher, campaign.amount);
+    return executeTransfer(campaign.advertiser, campaign.publisher, campaign.amount);
   }
 
-  function executeTransaction(
+  function executeTransfer(
     address advertiser,
     address publisher,
     uint amount

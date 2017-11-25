@@ -9,7 +9,7 @@ ability to transfer value and check balances.
 
 ## mapping: balances
 
-`balances` is a mapping of `address` to `uint` used to store the balances of accounts using
+`balances` is a `mapping` of `address` to `uint` used to store the balances of accounts using
 `TokenStub`.
 
 ## modifier: isOwner
@@ -25,8 +25,8 @@ argument.
 
 ## constructor: TokenStub [public]
 
-`TokenStub` is a constructor takes as argument an `address` and sets its `owner` to it, and gives
-the owner a balance of 1000000.
+`TokenStub` is a constructor that takes as argument an `address` and sets its `owner` to it, and
+gives the owner a balance of 1000000.
 
 ## function: getBalance [public view returns uint]
 
