@@ -38,7 +38,9 @@ contract SignalTokenProtocol {
     public
     returns (uint campaignId)
   {
-    campaignId = numberOfCampaigns++;
+    campaignId = numberOfCampaigns;
+    numberOfCampaigns++;
+
     campaigns[campaignId] = Campaign(advertiser, publisher, executor, amount);
   }
 

@@ -28,97 +28,97 @@ contract("TokenStub", function(accounts) {
   });
 
   it("should complete a transfer if sender's balance allows", function() {
-    const accountOne = owner;
-    let accountOneStartingBalance;
-    let accountOneEndingBalance;
+    const sender = owner;
+    let senderStartingBalance;
+    let senderEndingBalance;
 
-    const accountTwo = accounts[1];
-    let accountTwoStartingBalance;
-    let accountTwoEndingBalance;
+    const recipient = accounts[1];
+    let recipientStartingBalance;
+    let recipientTwoEndingBalance;
 
     const amount = 1000000;
 
-    return tokenStub.getBalance(accountOne)
+    return tokenStub.getBalance(sender)
     .then(function(balance) {
-      accountOneStartingBalance = balance.toNumber();
-      return tokenStub.getBalance(accountTwo);
+      senderStartingBalance = balance.toNumber();
+      return tokenStub.getBalance(recipient);
     })
     .then(function(balance) {
-      accountTwoStartingBalance = balance.toNumber();
+      recipientStartingBalance = balance.toNumber();
       return tokenStub.executeTransfer(
-        accountOne,
-        accountTwo,
+        sender,
+        recipient,
         amount,
-        { from: owner }
+        { from: sender }
       );
     })
     .then(function() {
-      return tokenStub.getBalance(accountOne);
+      return tokenStub.getBalance(sender);
     })
     .then(function(balance) {
-      accountOneEndingBalance = balance.toNumber();
-      return tokenStub.getBalance(accountTwo);
+      senderEndingBalance = balance.toNumber();
+      return tokenStub.getBalance(recipient);
     })
     .then(function(balance) {
-      accountTwoEndingBalance = balance.toNumber();
+      recipientEndingBalance = balance.toNumber();
 
       assert.equal(
-        accountOneEndingBalance,
-        accountOneStartingBalance - amount,
+        senderEndingBalance,
+        senderStartingBalance - amount,
         "0 wasn't the sender account final balance"
       );
 
       assert.equal(
-        accountTwoEndingBalance,
-        accountTwoStartingBalance + amount,
+        recipientEndingBalance,
+        recipientStartingBalance + amount,
         "1000000 wasn't the destination account final balance"
       );
     });
   });
 
   it("should revert a transfer if sender's balance disallows", function() {
-    const accountOne = owner;
-    let accountOneStartingBalance;
-    let accountOneEndingBalance;
+    const sender = owner;
+    let senderStartingBalance;
+    let senderEndingBalance;
 
-    const accountTwo = accounts[1];
-    let accountTwoStartingBalance;
-    let accountTwoEndingBalance;
+    const recipient = accounts[1];
+    let recipientStartingBalance;
+    let recipientTwoEndingBalance;
 
     const amount = 1000001;
 
-    return tokenStub.getBalance(accountOne)
+    return tokenStub.getBalance(sender)
     .then(function(balance) {
-      accountOneStartingBalance = balance.toNumber();
-      return tokenStub.getBalance(accountTwo);
+      senderStartingBalance = balance.toNumber();
+      return tokenStub.getBalance(recipient);
     })
     .then(function(balance) {
-      accountTwoStartingBalance = balance.toNumber();
+      recipientStartingBalance = balance.toNumber();
       return tokenStub.executeTransfer(
-        accountOne,
-        accountTwo,
+        sender,
+        recipient,
         amount,
-        { from: owner }
+        { from: sender }
       );
     })
     .then(function() {
-      return tokenStub.getBalance(accountOne);
+      return tokenStub.getBalance(sender);
     })
     .then(function(balance) {
-      accountOneEndingBalance = balance.toNumber();
-      return tokenStub.getBalance(accountTwo);
+      senderEndingBalance = balance.toNumber();
+      return tokenStub.getBalance(recipient);
     })
     .then(function(balance) {
-      accountTwoEndingBalance = balance.toNumber();
+      recipientEndingBalance = balance.toNumber();
 
       assert.equal(
-        accountOneEndingBalance,
-        accountOneStartingBalance,
+        senderEndingBalance,
+        senderStartingBalance,
         "1000000 wasn't the deploying account final balance"
       );
       assert.equal(
-        accountTwoEndingBalance,
-        accountTwoStartingBalance,
+        recipientEndingBalance,
+        recipientStartingBalance,
         "0 wasn't the destination account final balance"
       );
     });
