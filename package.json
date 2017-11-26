@@ -5,5 +5,8 @@
   "main": "index.js",
   "repository": "https://gitlab.com/decent-technologies/clients/spectiv/signal-token-protocol.git",
   "author": "Parker McCurley <parker@decentcrypto.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "lite-server": "^2.3.0"
+  }
 }
