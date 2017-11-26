@@ -13,7 +13,7 @@ development and testing purposes.
 
 ### Installing
 
-After cloning this repository and installing the above dependencies, perform
+After cloning this repository and installing the above dependencies, from the project directory
 
 ```
 $ truffle develop
