@@ -1,0 +1,16 @@
+/* bootstrap classes */
+
+.jumbotron {
+  text-align: center;
+}
+
+/* custom classes */
+
+.spectiv-logo {
+  width: 80%;
+  margin-top: 30px;
+}
+
+.instructions {
+  text-align: center;
+}
