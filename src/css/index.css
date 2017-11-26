@@ -14,3 +14,9 @@
 .instructions {
   text-align: center;
 }
+
+
+.warning {
+  color: red;
+  text-align: center;
+}
