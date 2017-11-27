@@ -49,12 +49,11 @@ truffle(develop)> test
 
 ## Running the demo
 
-From the project directory
+From the project directory, make sure truffle is serving to `localhost:9545`
 
 ```
 $ truffle develop
 ```
-
 
 ```
 truffle(develop)> compile

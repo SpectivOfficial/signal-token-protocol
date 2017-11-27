@@ -76,20 +76,24 @@ app = {
     var executor = app.accounts[2];
     var amount = parseInt($("#campaignAmount").val());
 
-    app.contracts.SignalTokenProtocol.deployed()
-    .then(function(instance) {
-      signalTokenProtocolInstance = instance;
-      return signalTokenProtocolInstance.createCampaign(
-        advertiser,
-        publisher,
-        executor,
-        amount,
-        { from: advertiser, gas: 1000000 }
-      );
-    })
-    .then(function(foo) {
-      app.renderCampaign();
-    });
+    if (amount > 500000) {
+      alert("Campaign amount cannot exceed more than 500000 SIG.");
+    } else {
+      app.contracts.SignalTokenProtocol.deployed()
+      .then(function(instance) {
+        signalTokenProtocolInstance = instance;
+        return signalTokenProtocolInstance.createCampaign(
+          advertiser,
+          publisher,
+          executor,
+          amount,
+          { from: advertiser, gas: 1000000 }
+        );
+      })
+      .then(function(foo) {
+        app.renderCampaign();
+      });
+    }
   },
 
   renderCampaign: function() {
