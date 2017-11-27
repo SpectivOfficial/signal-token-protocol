@@ -1,6 +1,6 @@
-# spectiv
+# signal-token-protocol
 
-Spectiv, the smart contract advertising platform.
+Signal, the smart contract advertising token.
 
 ## Getting Started
 
