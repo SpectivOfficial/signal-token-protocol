@@ -29,6 +29,14 @@ contract SignalTokenProtocol {
     tokenStub = new TokenStub(this);
   }
 
+  function getBalance(address _address)
+    public
+    view
+    returns (uint)
+  {
+    return tokenStub.getBalance(_address);
+  }
+
   function createCampaign(
     address advertiser,
     address publisher,
