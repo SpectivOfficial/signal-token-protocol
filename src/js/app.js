@@ -29,31 +29,6 @@ app = {
       app.contracts.SignalTokenProtocol.setProvider(app.web3Provider);
     })
     .then(function() {
-      app.initBalances();
-    });
-  },
-
-  initBalances: function() {
-    var signalTokenProtocolInstance;
-    var advertiser = app.accounts[0];
-    var amount = 500000;
-
-    app.contracts.SignalTokenProtocol.deployed()
-    .then(function(instance) {
-      signalTokenProtocolInstance = instance;
-      return signalTokenProtocolInstance.getBalance(advertiser, { from: advertiser, gas: 1000000 })
-    })
-    .then(function(advertiserBalance) {
-      if (advertiserBalance == 0) {
-        return signalTokenProtocolInstance.executeTransfer(
-          signalTokenProtocolInstance.address,
-          advertiser,
-          amount,
-          { from: advertiser, gas: 1000000 }
-        );
-      }
-    })
-    .then(function() {
       app.initTemplate();
     });
   },
