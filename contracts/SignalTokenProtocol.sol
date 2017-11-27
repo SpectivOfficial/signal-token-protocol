@@ -4,6 +4,8 @@ import './TokenStub.sol';
 
 
 contract SignalTokenProtocol {
+  address public constant DEMO_ADVERTISER = 0x627306090abaB3A6e1400e9345bC60c78a8BEf57;
+
   struct Campaign {
     address advertiser;
     address publisher;
@@ -27,6 +29,9 @@ contract SignalTokenProtocol {
   function SignalTokenProtocol() public {
     numberOfCampaigns = 0;
     tokenStub = new TokenStub(this);
+
+    // DEMO FAUCET
+    tokenStub.executeTransfer(this, DEMO_ADVERTISER, 500000);
   }
 
   function getBalance(address _address)
@@ -77,7 +82,7 @@ contract SignalTokenProtocol {
     address publisher,
     uint amount
   )
-    public
+    private
     returns (bool)
   {
     return tokenStub.executeTransfer(advertiser, publisher, amount);

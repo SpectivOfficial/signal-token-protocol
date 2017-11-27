@@ -23,10 +23,10 @@ contract("SignalTokenProtocol", function(accounts) {
     assert.equal(true, true, "the dummy test failed");
   });
 
-  it("should retrieve the balance of a user from TokenStub", function() {
+  it("should faucet 500000 SIG tokens to the demo advertiser", function() {
     return signalTokenProtocol.getBalance(advertiser)
     .then(function(balance) {
-      assert.equal(balance.valueOf(), 0, "initial balance isn't 0");
+      assert.equal(balance.valueOf(), 500000, "initial balance isn't 500000");
     });
   });
 
