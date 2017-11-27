@@ -1,5 +1,5 @@
-var ClevelandCoin = artifacts.require("./ClevelandCoin.sol");
+const SignalTokenProtocol = artifacts.require("./SignalTokenProtocol.sol");
 
 module.exports = function(deployer) {
-  deployer.deploy(ClevelandCoin);
+  deployer.deploy(SignalTokenProtocol);
 };

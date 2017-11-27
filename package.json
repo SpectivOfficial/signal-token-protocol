@@ -1,17 +1,15 @@
 {
-  "name": "cleveland-coin",
-  "version": "1.0.0",
-  "description": "Cleveland Coin project",
-  "main": "truffle.js",
-  "directories": {
-    "test": "test"
-  },
+  "name": "signal-token-protocol",
+  "version": "0.1.0",
+  "description": "Signal, the smart contract advertising token.",
+  "main": "index.js",
+  "repository": "https://gitlab.com/decent-technologies/clients/spectiv/signal-token-protocol.git",
+  "author": "Parker McCurley <parker@decentcrypto.com>",
+  "license": "MIT",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "demo": "lite-server"
   },
-  "author": "Adam Gall",
-  "license": "ISC",
-  "dependencies": {
-    "zeppelin-solidity": "^1.3.0"
+  "devDependencies": {
+    "lite-server": "^2.3.0"
   }
 }
