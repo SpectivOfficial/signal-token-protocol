@@ -36,3 +36,11 @@
 .campaign {
   display: none;
 }
+
+.advertiser-balance {
+  color: #4FBC95;
+}
+
+.publisher-balance {
+  color: #E2212c;
+}

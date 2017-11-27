@@ -77,7 +77,7 @@ contract SignalTokenProtocol {
     address publisher,
     uint amount
   )
-    private
+    public
     returns (bool)
   {
     return tokenStub.executeTransfer(advertiser, publisher, amount);

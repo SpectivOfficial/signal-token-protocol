@@ -29,6 +29,31 @@ app = {
       app.contracts.SignalTokenProtocol.setProvider(app.web3Provider);
     })
     .then(function() {
+      app.initBalances();
+    });
+  },
+
+  initBalances: function() {
+    var signalTokenProtocolInstance;
+    var advertiser = app.accounts[0];
+    var amount = 500000;
+
+    app.contracts.SignalTokenProtocol.deployed()
+    .then(function(instance) {
+      signalTokenProtocolInstance = instance;
+      return signalTokenProtocolInstance.getBalance(advertiser, { from: advertiser, gas: 1000000 })
+    })
+    .then(function(advertiserBalance) {
+      if (advertiserBalance == 0) {
+        return signalTokenProtocolInstance.executeTransfer(
+          signalTokenProtocolInstance.address,
+          advertiser,
+          amount,
+          { from: advertiser, gas: 1000000 }
+        );
+      }
+    })
+    .then(function() {
       app.initTemplate();
     });
   },
@@ -62,7 +87,7 @@ app = {
         { from: advertiser, gas: 1000000 }
       );
     })
-    .then(function() {
+    .then(function(foo) {
       app.renderCampaign();
     });
   },
@@ -70,7 +95,11 @@ app = {
   renderCampaign: function() {
     var signalTokenProtocolInstance;
     var campaignId;
+    var campaign;
+    var advertiserBalance;
+    var publisherBalance;
     var advertiser = app.accounts[0];
+    var publisher = app.accounts[1];
 
     app.contracts.SignalTokenProtocol.deployed()
     .then(function(instance) {
@@ -81,15 +110,59 @@ app = {
       campaignId = parseInt(numberOfCampaigns.valueOf()) - 1;
       return signalTokenProtocolInstance.getCampaign(campaignId, { from: advertiser, gas: 100000 });
     })
-    .then(function(campaign) {
+    .then(function(campaignData) {
+      campaign = campaignData;
+      return signalTokenProtocolInstance.getBalance(advertiser, { from: advertiser, gas: 100000 });
+    })
+    .then(function(balance) {
+      advertiserBalance = parseInt(balance.valueOf());
+      return signalTokenProtocolInstance.getBalance(publisher, { from: advertiser, gas: 100000 });
+    })
+    .then(function(balance) {
+      publisherBalance = parseInt(balance.valueOf());
       $(".instructions1").hide();
       $(".create-campaign").hide();
       $(".advertiser").text(campaign[0]);
       $(".publisher").text(campaign[1]);
       $(".executor").text(campaign[2]);
       $(".amount").text(campaign[3] + " SIG");
+      $(".advertiser-balance").text(advertiserBalance + " SIG");
+      $(".publisher-balance").text(publisherBalance + " SIG");
       $(".instructions2").show();
       $(".campaign").show();
+      $(".advertisement").unbind().click(app.executeCampaign);
+    });
+  },
+
+  executeCampaign: function() {
+    var signalTokenProtocolInstance;
+    var campaignId;
+    var advertiserBalance;
+    var publisherBalance;
+    var advertiser = app.accounts[0];
+    var publisher = app.accounts[1];
+    var executor = app.accounts[2];
+
+    app.contracts.SignalTokenProtocol.deployed()
+    .then(function(instance) {
+      signalTokenProtocolInstance = instance;
+      return signalTokenProtocolInstance.numberOfCampaigns.call({ from: advertiser, gas: 100000 });
+    })
+    .then(function(numberOfCampaigns) {
+      campaignId = parseInt(numberOfCampaigns.valueOf()) - 1;
+      return signalTokenProtocolInstance.executeCampaign(campaignId, { from: executor, gas: 100000 });
+    })
+    .then(function() {
+      return signalTokenProtocolInstance.getBalance(advertiser, { from: advertiser, gas: 100000 });
+    })
+    .then(function(balance) {
+      advertiserBalance = parseInt(balance.valueOf());
+      return signalTokenProtocolInstance.getBalance(publisher, { from: advertiser, gas: 100000 });
+    })
+    .then(function(balance) {
+      publisherBalance = parseInt(balance.valueOf());
+      $(".advertiser-balance").text(advertiserBalance + " SIG");
+      $(".publisher-balance").text(publisherBalance + " SIG");
     });
   }
 }
