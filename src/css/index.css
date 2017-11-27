@@ -4,19 +4,35 @@
   text-align: center;
 }
 
+.form-control:focus {
+  border-color: #4FBC95;
+}
+
+.btn-primary,
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active,
+.btn-primary:active:focus {
+  background-color: #4FBC95;
+}
+
 /* custom classes */
 
-.spectiv-logo {
-  width: 80%;
+.advertisement {
+  width: 50%;
   margin-top: 30px;
 }
 
-.instructions {
-  text-align: center;
+.instructions1,
+.instructions2 {
+  font-size: 18px;
+  color: #4FBC95;
 }
 
+.instructions2 {
+  display: none;
+}
 
-.warning {
-  color: red;
-  text-align: center;
+.campaign {
+  display: none;
 }
