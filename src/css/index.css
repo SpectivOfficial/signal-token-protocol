@@ -1,0 +1,46 @@
+/* bootstrap classes */
+
+.jumbotron {
+  text-align: center;
+}
+
+.form-control:focus {
+  border-color: #4FBC95;
+}
+
+.btn-primary,
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active,
+.btn-primary:active:focus {
+  background-color: #4FBC95;
+}
+
+/* custom classes */
+
+.advertisement {
+  width: 50%;
+  margin-top: 30px;
+}
+
+.instructions1,
+.instructions2 {
+  font-size: 18px;
+  color: #4FBC95;
+}
+
+.instructions2 {
+  display: none;
+}
+
+.campaign {
+  display: none;
+}
+
+.advertiser-balance {
+  color: #4FBC95;
+}
+
+.publisher-balance {
+  color: #E2212c;
+}

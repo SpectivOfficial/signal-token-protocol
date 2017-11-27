@@ -1,0 +1,15 @@
+{
+  "name": "signal-token-protocol",
+  "version": "0.1.0",
+  "description": "Signal, the smart contract advertising token.",
+  "main": "index.js",
+  "repository": "https://gitlab.com/decent-technologies/clients/spectiv/signal-token-protocol.git",
+  "author": "Parker McCurley <parker@decentcrypto.com>",
+  "license": "MIT",
+  "scripts": {
+    "demo": "lite-server"
+  },
+  "devDependencies": {
+    "lite-server": "^2.3.0"
+  }
+}

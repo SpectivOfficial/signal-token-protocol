@@ -26,10 +26,16 @@ mapping.
 `isExecutor` is a modifier that takes as argument a `uint` and only executes its modified function
 if the function caller is the executor of the campaign with the id of the `uint` argument.
 
-## contructor: SignalTokenProtocol [public]
+## constructor: SignalTokenProtocol [public]
 
 `SignalTokenProtocol` is a contructor that takes no arguments, sets the `numberOfCmapaigns` to 0,
-and creates a new `TokenStub` owned by the protocol contract..
+and creates a new `TokenStub` owned by the protocol contract.
+
+## function: getBalance [public view returns uint]
+
+`getBalance` is a function that takes as argument an `address` and calls `getBalance` in
+the `tokenStub` contract.
+
 
 ## function: createCampaign [public returns uint]
 
@@ -52,3 +58,5 @@ the campaign.
 ## function: executeTransfer [private returns bool]
 
 `executeTransfer` is a function that calls `executeTransfer` on `tokenStub`.
+
+NOTE: For demo purposes this function is public.

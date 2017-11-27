@@ -29,6 +29,14 @@ contract SignalTokenProtocol {
     tokenStub = new TokenStub(this);
   }
 
+  function getBalance(address _address)
+    public
+    view
+    returns (uint)
+  {
+    return tokenStub.getBalance(_address);
+  }
+
   function createCampaign(
     address advertiser,
     address publisher,
@@ -38,9 +46,7 @@ contract SignalTokenProtocol {
     public
     returns (uint campaignId)
   {
-    campaignId = numberOfCampaigns;
-    numberOfCampaigns++;
-
+    campaignId = numberOfCampaigns++;
     campaigns[campaignId] = Campaign(advertiser, publisher, executor, amount);
   }
 
@@ -71,7 +77,7 @@ contract SignalTokenProtocol {
     address publisher,
     uint amount
   )
-    private
+    public
     returns (bool)
   {
     return tokenStub.executeTransfer(advertiser, publisher, amount);
