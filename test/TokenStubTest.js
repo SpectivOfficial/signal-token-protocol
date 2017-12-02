@@ -34,7 +34,7 @@ contract("TokenStub", function(accounts) {
 
     const recipient = accounts[1];
     let recipientStartingBalance;
-    let recipientTwoEndingBalance;
+    let recipientEndingBalance;
 
     const amount = 1000000;
 
