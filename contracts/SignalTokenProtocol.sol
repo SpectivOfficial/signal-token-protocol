@@ -1,22 +1,21 @@
 pragma solidity ^0.4.18;
 
-import './TokenStub.sol';
+import './SignalToken.sol';
 
 
 contract SignalTokenProtocol {
-  address public constant DEMO_ADVERTISER = 0x627306090abaB3A6e1400e9345bC60c78a8BEf57;
-
   struct Campaign {
     address advertiser;
     address publisher;
     address executor;
     uint amount;
+    uint limit;
   }
 
   mapping(uint => Campaign) public campaigns;
   uint public numberOfCampaigns;
 
-  TokenStub public tokenStub;
+  SignalToken public signalToken;
 
   modifier isExecutor(uint campaignId) {
     Campaign storage campaign = campaigns[campaignId];
@@ -28,37 +27,33 @@ contract SignalTokenProtocol {
 
   function SignalTokenProtocol() public {
     numberOfCampaigns = 0;
-    tokenStub = new TokenStub(this);
-
-    // DEMO FAUCET
-    tokenStub.executeTransfer(this, DEMO_ADVERTISER, 500000);
+    signalToken = new SignalToken(this);
   }
 
-  function getBalance(address _address)
+  function faucet()
     public
-    view
-    returns (uint)
+    returns (bool)
   {
-    return tokenStub.getBalance(_address);
+    return signalToken.mint(msg.sender, 500000);
   }
 
   function createCampaign(
-    address advertiser,
     address publisher,
     address executor,
-    uint amount
+    uint amount,
+    uint limit
   )
     public
     returns (uint campaignId)
   {
     campaignId = numberOfCampaigns++;
-    campaigns[campaignId] = Campaign(advertiser, publisher, executor, amount);
+    campaigns[campaignId] = Campaign(msg.sender, publisher, executor, amount, limit);
   }
 
   function getCampaign(uint campaignId)
     public
     view
-    returns (address advertiser, address publisher, address executor, uint amount)
+    returns (address advertiser, address publisher, address executor, uint amount, uint limit)
   {
     Campaign storage campaign = campaigns[campaignId];
 
@@ -66,6 +61,7 @@ contract SignalTokenProtocol {
     publisher = campaign.publisher;
     executor = campaign.executor;
     amount = campaign.amount;
+    limit = campaign.limit;
   }
 
   function executeCampaign(uint campaignId)
@@ -85,6 +81,6 @@ contract SignalTokenProtocol {
     private
     returns (bool)
   {
-    return tokenStub.executeTransfer(advertiser, publisher, amount);
+    return signalToken.transferFrom(advertiser, publisher, amount);
   }
 }
