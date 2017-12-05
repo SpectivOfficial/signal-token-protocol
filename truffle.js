@@ -1,3 +1,9 @@
 module.exports = {
-  // https://truffleframework.com/docs/advanced/configuration
+  networks: {
+    "ropsten": {
+      network_id: 1,
+      host: "localhost",
+      port: 8545
+    }
+  }
 };
