@@ -6,24 +6,14 @@ import './SignalToken.sol';
 contract SignalTokenProtocol {
   struct Campaign {
     address advertiser;
-    address publisher;
-    address executor;
-    uint amount;
-    uint limit;
+    uint reward;
+    uint budget;
   }
 
   mapping(uint => Campaign) public campaigns;
   uint public numberOfCampaigns;
 
   SignalToken public signalToken;
-
-  modifier isExecutor(uint campaignId) {
-    Campaign storage campaign = campaigns[campaignId];
-
-    if (msg.sender == campaign.executor) {
-      _;
-    }
-  }
 
   function SignalTokenProtocol() public {
     numberOfCampaigns = 0;
@@ -38,49 +28,44 @@ contract SignalTokenProtocol {
   }
 
   function createCampaign(
-    address publisher,
-    address executor,
-    uint amount,
-    uint limit
+    uint reward,
+    uint budget
   )
     public
     returns (uint campaignId)
   {
     campaignId = numberOfCampaigns++;
-    campaigns[campaignId] = Campaign(msg.sender, publisher, executor, amount, limit);
+    campaigns[campaignId] = Campaign(msg.sender, reward, budget);
   }
 
   function getCampaign(uint campaignId)
     public
     view
-    returns (address advertiser, address publisher, address executor, uint amount, uint limit)
+    returns (address advertiser,  uint reward, uint budget)
   {
     Campaign storage campaign = campaigns[campaignId];
 
     advertiser = campaign.advertiser;
-    publisher = campaign.publisher;
-    executor = campaign.executor;
-    amount = campaign.amount;
-    limit = campaign.limit;
+    reward = campaign.reward;
+    budget = campaign.budget;
   }
 
-  function executeCampaign(uint campaignId)
+  function executeCampaign(uint campaignId, address publisher)
     public
-    isExecutor(campaignId)
     returns (bool)
   {
     Campaign storage campaign = campaigns[campaignId];
-    return executeTransfer(campaign.advertiser, campaign.publisher, campaign.amount);
+    return executeTransfer(campaign.advertiser, publisher, campaign.reward);
   }
 
   function executeTransfer(
     address advertiser,
     address publisher,
-    uint amount
+    uint reward
   )
     private
     returns (bool)
   {
-    return signalToken.transferFrom(advertiser, publisher, amount);
+    return signalToken.transferFrom(advertiser, publisher, reward);
   }
 }
