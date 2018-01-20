@@ -6,18 +6,36 @@ import './SignalToken.sol';
 contract SignalTokenProtocol {
   struct Campaign {
     address advertiser;
-    uint reward;
-    uint budget;
+    string title;
+    string description;
+    string contentUrl;
+    uint256 reward;
+    uint256 budget;
   }
 
-  mapping(uint => Campaign) public campaigns;
-  uint public numberOfCampaigns;
+  mapping(uint256 => Campaign) public campaigns;
+  uint256[] public campaignsTable;
 
   SignalToken public signalToken;
 
   function SignalTokenProtocol() public {
-    numberOfCampaigns = 0;
     signalToken = new SignalToken(this);
+  }
+
+  function getCampaignsCount()
+    public
+    view
+    returns (uint256)
+  {
+    return campaignsTable.length;
+  }
+
+  function getSignalTokenAddress()
+    public
+    constant
+    returns (SignalToken)
+  {
+    return signalToken;
   }
 
   function faucet()
@@ -28,29 +46,55 @@ contract SignalTokenProtocol {
   }
 
   function createCampaign(
-    uint reward,
-    uint budget
+    string title,
+    string description,
+    string contentUrl,
+    uint256 reward,
+    uint256 budget
   )
     public
-    returns (uint campaignId)
+    returns (uint256 campaignId)
   {
-    campaignId = numberOfCampaigns++;
-    campaigns[campaignId] = Campaign(msg.sender, reward, budget);
+    campaignId = campaignsTable.length++;
+    campaignsTable[campaignId] = campaignId;
+
+    campaigns[campaignId] = Campaign(
+      msg.sender,
+      title,
+      description,
+      contentUrl,
+      reward,
+      budget
+    );
+
+    return campaignId;
   }
 
-  function getCampaign(uint campaignId)
+  function getCampaign(uint256 campaignId)
     public
     view
-    returns (address advertiser,  uint reward, uint budget)
+    returns (
+      address advertiser,
+      string title,
+      string description,
+      string contentUrl,
+      uint256 reward,
+      uint256 budget
+    )
   {
     Campaign storage campaign = campaigns[campaignId];
 
     advertiser = campaign.advertiser;
+    title = campaign.title;
+    description = campaign.description;
+    contentUrl = campaign.contentUrl;
     reward = campaign.reward;
     budget = campaign.budget;
+
+    return (advertiser, title, description, contentUrl, reward, budget);
   }
 
-  function executeCampaign(uint campaignId, address publisher)
+  function executeCampaign(uint256 campaignId, address publisher)
     public
     returns (bool)
   {
@@ -61,7 +105,7 @@ contract SignalTokenProtocol {
   function executeTransfer(
     address advertiser,
     address publisher,
-    uint reward
+    uint256 reward
   )
     private
     returns (bool)
