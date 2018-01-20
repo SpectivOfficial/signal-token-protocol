@@ -6,28 +6,36 @@ import './SignalToken.sol';
 contract SignalTokenProtocol {
   struct Campaign {
     address advertiser;
-    address publisher;
-    address executor;
-    uint amount;
-    uint limit;
+    string title;
+    string description;
+    string contentUrl;
+    uint256 reward;
+    uint256 budget;
   }
 
-  mapping(uint => Campaign) public campaigns;
-  uint public numberOfCampaigns;
+  mapping(uint256 => Campaign) public campaigns;
+  uint256[] public campaignsTable;
 
   SignalToken public signalToken;
 
-  modifier isExecutor(uint campaignId) {
-    Campaign storage campaign = campaigns[campaignId];
-
-    if (msg.sender == campaign.executor) {
-      _;
-    }
+  function SignalTokenProtocol() public {
+    signalToken = new SignalToken(this);
   }
 
-  function SignalTokenProtocol() public {
-    numberOfCampaigns = 0;
-    signalToken = new SignalToken(this);
+  function getCampaignsCount()
+    public
+    view
+    returns (uint256)
+  {
+    return campaignsTable.length;
+  }
+
+  function getSignalTokenAddress()
+    public
+    constant
+    returns (SignalToken)
+  {
+    return signalToken;
   }
 
   function faucet()
@@ -38,49 +46,70 @@ contract SignalTokenProtocol {
   }
 
   function createCampaign(
-    address publisher,
-    address executor,
-    uint amount,
-    uint limit
+    string title,
+    string description,
+    string contentUrl,
+    uint256 reward,
+    uint256 budget
   )
     public
-    returns (uint campaignId)
+    returns (uint256 campaignId)
   {
-    campaignId = numberOfCampaigns++;
-    campaigns[campaignId] = Campaign(msg.sender, publisher, executor, amount, limit);
+    campaignId = campaignsTable.length++;
+    campaignsTable[campaignId] = campaignId;
+
+    campaigns[campaignId] = Campaign(
+      msg.sender,
+      title,
+      description,
+      contentUrl,
+      reward,
+      budget
+    );
+
+    return campaignId;
   }
 
-  function getCampaign(uint campaignId)
+  function getCampaign(uint256 campaignId)
     public
     view
-    returns (address advertiser, address publisher, address executor, uint amount, uint limit)
+    returns (
+      address advertiser,
+      string title,
+      string description,
+      string contentUrl,
+      uint256 reward,
+      uint256 budget
+    )
   {
     Campaign storage campaign = campaigns[campaignId];
 
     advertiser = campaign.advertiser;
-    publisher = campaign.publisher;
-    executor = campaign.executor;
-    amount = campaign.amount;
-    limit = campaign.limit;
+    title = campaign.title;
+    description = campaign.description;
+    contentUrl = campaign.contentUrl;
+    reward = campaign.reward;
+    budget = campaign.budget;
+
+    return (advertiser, title, description, contentUrl, reward, budget);
   }
 
-  function executeCampaign(uint campaignId)
+  function executeCampaign(uint256 campaignId, address publisher)
     public
-    isExecutor(campaignId)
     returns (bool)
   {
     Campaign storage campaign = campaigns[campaignId];
-    return executeTransfer(campaign.advertiser, campaign.publisher, campaign.amount);
+    return executeTransfer(campaign.advertiser, publisher, campaign.reward);
   }
 
   function executeTransfer(
     address advertiser,
     address publisher,
-    uint amount
+    uint256 reward
   )
     private
     returns (bool)
   {
-    return signalToken.transferFrom(advertiser, publisher, amount);
+    return signalToken.transferFrom(advertiser, publisher, reward);
   }
 }
